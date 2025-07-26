@@ -1,12 +1,31 @@
 from textual.app import App, ComposeResult
-from textual.widgets import DirectoryTree
+from textual.widgets import Markdown, RichLog, Header
+import scanpy as sc
+
+
+def read_h5ad(file_path: str) -> sc.AnnData:
+    adata = sc.read_h5ad(file_path)
+    return adata
 
 
 class ScInspectApp(App):
+    def __init__(self, filepath: str) -> None:
+        self.filepath = filepath
+        self.adata = None
+        super().__init__()
+
     def compose(self) -> ComposeResult:
-        yield DirectoryTree("./")
+        yield Header()
+        yield RichLog()
 
+    def on_mount(self) -> None:
+        self.title = "ScInspect"
+        self.sub_title = self.filepath
 
-if __name__ == "__main__":
-    app = ScInspectApp()
-    app.run()
+        self.adata = read_h5ad(self.filepath)
+
+    def on_ready(self) -> None:
+        text_log = self.query_one(RichLog)
+
+        adata_info = self.adata.__repr__()
+        text_log.write(adata_info)
