@@ -1,0 +1,17 @@
+#plot-log {
+    border: round cyan;
+    padding: 1;
+    align: center middle;
+}
+
+#details-log {
+    border: round cyan;
+    padding: 1;
+    align: center middle;
+    max-width: 33vw;
+}
+
+#obs-table {
+    max-width: 20vw;
+    min-height: 100vh;
+}

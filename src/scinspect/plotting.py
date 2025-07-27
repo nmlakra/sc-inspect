@@ -1,5 +1,6 @@
 import scanpy as sc
 import plotille
+from rich.text import Text
 
 COLORS = [
     (166, 206, 227),  # Sky
@@ -17,18 +18,21 @@ COLORS = [
 ]
 
 
-def plot_umap(adata: sc.AnnData, column) -> str:
+def plot_umap(adata: sc.AnnData, column) -> Text:
     if "X_umap" not in adata.obsm:
-        return "Error: cannot plot UMAP, adata doesn't contain the UMAP information."
+        return Text(
+            "Error: cannot plot UMAP, adata doesn't contain the UMAP information."
+        )
 
     if column not in adata.obs.columns:
-        return "Error: adata invalid column selected."
+        return Text("Error: adata invalid column selected.")
 
     fig = plotille.Figure()
+    fig.background = 232
     fig._origin = False
-    fig.width = 30
-    fig.height = 15
-    fig.color_mode = "rgb"
+    fig.width = 40
+    fig.height = 20
+    fig.color_mode = "byte"
 
     for i, val in enumerate(adata.obs[column].unique()):
         bdata = adata[adata.obs[column] == val]
@@ -36,8 +40,36 @@ def plot_umap(adata: sc.AnnData, column) -> str:
         x = bdata.obsm["X_umap"][:, 0]
         y = bdata.obsm["X_umap"][:, 1]
 
-        label_color = COLORS[i % len(COLORS)]
+        label_color = plotille._colors.rgb2byte(*(COLORS[i % len(COLORS)]))
 
         fig.scatter(x, y, label=val, lc=label_color)
 
-    return fig.show(legend=True)
+    umap = remove_umap_spline(fig.show(legend=True))
+    return Text.from_ansi(umap)
+
+
+def plot_hist(adata: sc.AnnData, column) -> Text:
+    data_series = adata.obs[column]
+    hist = plotille.hist(
+        data_series, bg=232, color_mode="byte", lc=231, width=25, bins=25
+    )
+    return Text.from_ansi(hist)
+
+
+def remove_umap_spline(umap_fig: str) -> str:
+    cleaned_umap = []
+    lines = umap_fig.splitlines()
+    offset = lines[1].find(" |") + 3
+    for i, line in enumerate(lines):
+        if line == "":
+            cleaned_umap.extend(lines[i:])
+            break
+        elif i == 0:
+            continue
+        elif line.endswith("(X)"):
+            continue
+        elif line.startswith(" "):
+            continue
+        else:
+            cleaned_umap.append(" " * offset + line[offset:])
+    return "\n".join(cleaned_umap)
