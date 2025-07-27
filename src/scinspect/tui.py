@@ -1,11 +1,12 @@
 import scanpy as sc
+from rich.align import Align
 from rich.table import Table
 from rich.text import Text
-from rich.align import Align
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal
 from textual.widgets import DataTable, Footer, Header, RichLog
-from .plotting import plot_umap, plot_hist
+
+from .plotting import plot_hist, plot_umap
 
 
 def read_h5ad(file_path: str) -> sc.AnnData:

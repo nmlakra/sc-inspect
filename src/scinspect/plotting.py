@@ -1,6 +1,6 @@
-import scanpy as sc
 import pandas as pd
 import plotille
+import scanpy as sc
 from rich.text import Text
 
 COLORS = [
@@ -30,19 +30,22 @@ def get_umap_key(adata: sc.AnnData) -> str:
     return umap_key
 
 
-def downsampler(data_series: pd.Series) -> tuple[list, int]:
+def down_sampler(data_series: pd.Series) -> tuple[list, int]:
+    """The function returns the list of valid unqiue values and the frequency for the downsampling process for plotting UMAP"""
     min_cutoff = 10
     max_cutoff = 1000
 
-    value_counts = data_series.value_counts()
+    value_frequency = data_series.value_counts()
 
     # Remove any values that are below min_cutoff
-    value_counts = value_counts[value_counts > min_cutoff]
+    filtered_frequency = value_frequency[value_frequency > min_cutoff]
 
-    valid_values = value_counts.index.to_list()
-    if value_counts.min() > max_cutoff:
-        return valid_values, max_cutoff
-    return valid_values, value_counts.min()
+    # Get the list of valid values that have atleast more than min_cutoff
+    valid_values = filtered_frequency.index.to_list()  # type: ignore
+
+    # Cap the minimum size of the downsampled_size to the max_cutoff
+    downsampled_size = min(filtered_frequency.min(), max_cutoff)
+    return valid_values, downsampled_size
 
 
 def plot_umap(adata: sc.AnnData, column) -> Text:
@@ -57,13 +60,13 @@ def plot_umap(adata: sc.AnnData, column) -> Text:
         return Text("Error: adata invalid column selected.")
 
     fig = plotille.Figure()
-    fig.background = 232
+    fig.background = 232  # type: ignore
     fig._origin = False
-    fig.width = 40
-    fig.height = 20
+    fig.width = 50
+    fig.height = 25
     fig.color_mode = "byte"
 
-    valid_values, sample_size = downsampler(adata.obs[column])
+    valid_values, sample_size = down_sampler(adata.obs[column])  # type: ignore
     for i, val in enumerate(valid_values):
         bdata = adata[adata.obs[column] == val].to_memory()
         sc.pp.subsample(bdata, n_obs=sample_size, copy=True)
@@ -81,9 +84,17 @@ def plot_umap(adata: sc.AnnData, column) -> Text:
 
 def plot_hist(adata: sc.AnnData, column) -> Text:
     data_series = adata.obs[column]
+
+    bins = 25
+    # If the number of unique values are less than the defualt bin size
+    # we decrease the bin size to match the number of unique values
+    if data_series.nunique() < bins:
+        bins = data_series.nunique()
+
     hist = plotille.hist(
         data_series, bg=232, color_mode="byte", lc=231, width=25, bins=25
     )
+
     return Text.from_ansi(hist)
 
 
