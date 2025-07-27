@@ -1,4 +1,5 @@
 import scanpy as sc
+import pandas as pd
 import plotille
 from rich.text import Text
 
@@ -29,6 +30,21 @@ def get_umap_key(adata: sc.AnnData) -> str:
     return umap_key
 
 
+def downsampler(data_series: pd.Series) -> tuple[list, int]:
+    min_cutoff = 10
+    max_cutoff = 1000
+
+    value_counts = data_series.value_counts()
+
+    # Remove any values that are below min_cutoff
+    value_counts = value_counts[value_counts > min_cutoff]
+
+    valid_values = value_counts.index.to_list()
+    if value_counts.min() > max_cutoff:
+        return valid_values, max_cutoff
+    return valid_values, value_counts.min()
+
+
 def plot_umap(adata: sc.AnnData, column) -> Text:
     umap_key = get_umap_key(adata)
 
@@ -47,8 +63,10 @@ def plot_umap(adata: sc.AnnData, column) -> Text:
     fig.height = 20
     fig.color_mode = "byte"
 
-    for i, val in enumerate(adata.obs[column].unique()):
-        bdata = adata[adata.obs[column] == val]
+    valid_values, sample_size = downsampler(adata.obs[column])
+    for i, val in enumerate(valid_values):
+        bdata = adata[adata.obs[column] == val].to_memory()
+        sc.pp.subsample(bdata, n_obs=sample_size, copy=True)
 
         x = bdata.obsm[umap_key][:, 0]
         y = bdata.obsm[umap_key][:, 1]
