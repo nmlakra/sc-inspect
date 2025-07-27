@@ -50,8 +50,8 @@ def plot_umap(adata: sc.AnnData, column) -> Text:
     for i, val in enumerate(adata.obs[column].unique()):
         bdata = adata[adata.obs[column] == val]
 
-        x = bdata.obsm["X_umap"][:, 0]
-        y = bdata.obsm["X_umap"][:, 1]
+        x = bdata.obsm[umap_key][:, 0]
+        y = bdata.obsm[umap_key][:, 1]
 
         label_color = plotille._colors.rgb2byte(*(COLORS[i % len(COLORS)]))
 
