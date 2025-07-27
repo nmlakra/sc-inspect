@@ -18,8 +18,21 @@ COLORS = [
 ]
 
 
+def get_umap_key(adata: sc.AnnData) -> str:
+    """To avoid cases with different casing of the key: 'X_umap', 'X_Umap', 'X_UMAP', etc."""
+    umap_key = ""
+
+    for key in adata.obsm_keys():
+        if "umap" in key.lower():
+            umap_key = key
+
+    return umap_key
+
+
 def plot_umap(adata: sc.AnnData, column) -> Text:
-    if "X_umap" not in adata.obsm:
+    umap_key = get_umap_key(adata)
+
+    if not umap_key:
         return Text(
             "Error: cannot plot UMAP, adata doesn't contain the UMAP information."
         )
