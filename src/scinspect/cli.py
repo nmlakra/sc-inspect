@@ -1,4 +1,5 @@
 import argparse
+
 from .tui import ScInspectApp
 
 
