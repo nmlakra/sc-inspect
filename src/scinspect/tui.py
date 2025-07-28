@@ -10,6 +10,8 @@ from .data_reader import read_data
 
 
 class ScInspectApp(App):
+    """A TUI app to explore single cell .h5ad files"""
+
     def __init__(self, filepath: str) -> None:
         self.filepath = filepath
         self.adata = None
