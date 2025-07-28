@@ -16,6 +16,7 @@ dependencies = [
     "textual>=5.0.1",
 ]
 
+[project.scripts]
 sc-inspect = "scinspect.cli:main"
 
 [tool.setuptools.package-data]
