@@ -36,7 +36,7 @@ Exploring single-cell RNA-seq data often starts with examining the `AnnData` obj
 
 * [**plotille**](https://github.com/tammoippen/plotille): For generating lightweight, text-based plots directly in the terminal.
 
-* [**scanpy**](https://anndata.readthedocs.io/en/latest/)** & [Scanpy](https://scanpy.readthedocs.io/en/latest/)**: For reading `.h5ad` files and handling single-cell data structures.
+* [**Scanpy**](https://scanpy.readthedocs.io/en/latest/): For reading `.h5ad` files and handling single-cell data structures.
 
 ## 🚀 Getting Started
 
@@ -50,27 +50,35 @@ Exploring single-cell RNA-seq data often starts with examining the `AnnData` obj
 
 1. Clone the repository:
 
-   ```
-   git clone [https://github.com/your-username/sc-inspect.git](https://github.com/your-username/sc-inspect.git)
+   ```bash
+   git clone https://github.com/nmlakra/sc-inspect.git
    cd sc-inspect
-   
    ```
 
 2. Create and activate a virtual environment:
 
-   ```
-   # Using uv
+   Using uv:
+   ```bash
    uv venv
    source .venv/bin/activate
-   
+   ```
+
+   Using pip:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
    ```
 
 3. Install the package:
 
-   ```
-   # Using uv (recommended)
+   Using uv:
+   ```bash
    uv pip install .
-   
+   ```
+
+   Using pip:
+   ```bash
+   pip install .
    ```
 
 ### Usage
@@ -81,18 +89,16 @@ The `sc-inspect` command will be available automatically after installation.
 
 Simply run the command without any arguments to explore the included `pbmc3k` dataset.
 
-```
+```bash
 sc-inspect
-
 ```
 
 **2. Run with your own file:**
 
 Provide the path to your `.h5ad` file.
 
-```
+```bash
 sc-inspect /path/to/your/data.h5ad
-
 ```
 
 ## ⌨️ How to Use
@@ -107,10 +113,8 @@ sc-inspect /path/to/your/data.h5ad
 
 To set up a development environment, install the package in editable (`-e`) mode with the `dev` dependencies:
 
-```
-# Using uv
+```bash
 uv pip install -e .[dev]
-
 ```
 
 This will install development tools like `black` and `isort`.
