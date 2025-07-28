@@ -30,4 +30,4 @@ dev = [
 sc-inspect = "scinspect.cli:main"
 
 [tool.setuptools.package-data]
-"scinspect" = ["examples/*.h5ad"]
+"scinspect" = ["examples/*.h5ad", "*.tcss"]
