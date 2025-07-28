@@ -1,4 +1,3 @@
-import scanpy as sc
 from rich.align import Align
 from rich.table import Table
 from rich.text import Text
@@ -7,11 +6,7 @@ from textual.containers import Horizontal
 from textual.widgets import DataTable, Footer, Header, RichLog
 
 from .plotting import plot_hist, plot_umap
-
-
-def read_h5ad(file_path: str) -> sc.AnnData:
-    adata = sc.read_h5ad(file_path, backed="r+")
-    return adata
+from .data_reader import read_data
 
 
 class ScInspectApp(App):
@@ -52,10 +47,8 @@ class ScInspectApp(App):
     def get_data_columns(self) -> list:
         data_list = [("Column Name", "Data Type")]
         if self.adata is None:
-            raise Exception("could not load the data")
-        # total_counts = len(self.adata.obs)
+            raise Exception("Error: could not load the data")
         for col in self.adata.obs.columns:
-            # non_nan_counts = str(total_counts - sum(self.adata.obs[col].isna()))
             col_dtype = self.translate_dtype(str(self.adata.obs[col].dtype))
             data_list.append((str(col), col_dtype))
 
@@ -65,7 +58,7 @@ class ScInspectApp(App):
         self.title = "ScInspect"
         self.sub_title = self.filepath
 
-        self.adata = read_h5ad(self.filepath)
+        self.adata = read_data(self.filepath)
 
         plot_log = self.query_one("#plot-log", RichLog)
         plot_log.border_title = "Plot"
@@ -108,7 +101,6 @@ class ScInspectApp(App):
                 plot_log.write(Align.center(plot_hist(self.adata, selected_row)))
 
     def get_categorical_summary_table(self, categorical_col: str) -> Table:
-        # TODO: add NA count and NA%
         summary_table = Table(title=categorical_col)
 
         if self.adata is None:
