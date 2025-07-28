@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backedn = "setuptools.build_meta"
+
 [project]
 name = "sc-inspect"
 version = "0.1.0"
@@ -14,6 +18,12 @@ dependencies = [
     "rich>=14.1.0",
     "scanpy>=1.11.3",
     "textual>=5.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=25.1.0",
+    "isort>=6.0.1",
 ]
 
 [project.scripts]
