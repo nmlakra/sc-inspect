@@ -2,7 +2,7 @@
 
 **sc-inspect** is a fast, lightweight, and interactive Terminal User Interface (TUI) for exploring the metadata of single-cell datasets stored in `.h5ad` format.
 
-*(A placeholder for a cool GIF or screenshot of your application in action!)*
+  ![sc-inspect](docs/images/sc-inspect.svg)
 
 ## 💡 The Problem
 
