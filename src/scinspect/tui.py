@@ -17,6 +17,8 @@ class ScInspectApp(App):
 
     CSS_PATH = "scinspect.tcss"
 
+    BINDINGS = [("q", "quit", "Quit sc-inspect")]
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
